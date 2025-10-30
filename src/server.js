@@ -14,18 +14,32 @@ import { aiRouter } from './routes/ai.js';
 
 const app = express();
 
-// Serve static files from src directory
-app.use(express.static('src'));
-
 // Basic CORS setup; tighten origins per environment as needed
 app.use(cors());
 app.use(express.json({ limit: '512kb' }));
+
+// Serve static files from src directory
+// In Vercel, files are relative to the function directory (src/)
+const staticPath = process.env.VERCEL || process.env.VERCEL_ENV ? path.join(__dirname) : 'src';
+app.use(express.static(staticPath));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Root route - serve index.html
+app.get('/', (_req, res) => {
+  const indexPath = path.join(staticPath, 'index.html');
+  res.sendFile(path.resolve(indexPath));
+});
+
 app.use('/api/ai', aiRouter);
+
+// Fallback for all other routes - serve index.html for SPA routing
+app.get('*', (_req, res) => {
+  const indexPath = path.join(staticPath, 'index.html');
+  res.sendFile(path.resolve(indexPath));
+});
 
 // Export for Vercel serverless function
 export default app;
