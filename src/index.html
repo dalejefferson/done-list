@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Done List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              base: {
+                900: '#1A2F30', // Very dark teal/black-green (bottom stripe)
+                800: '#243A3B', // Dark teal
+                700: '#2F4A4B', // Medium dark teal
+              },
+              accent: {
+                500: '#5A8A8C', // Deep muted teal (third stripe)
+                600: '#4A7C7E', // Deeper teal
+              },
+              peach: {
+                500: '#D4A574', // Warm muted peach/terracotta (second stripe)
+                600: '#C89A6A', // Darker peach
+              },
+              cream: {
+                50: '#F8F4F0', // Very light pink/cream (top stripe)
+                100: '#F5F0E8', // Light cream
+              },
+              orange: {
+                50: '#fff7ed',
+                400: '#fb923c',
+                500: '#f97316',
+                600: '#ea580c',
+              },
+            },
+            boxShadow: {
+              glow: '0 10px 40px rgba(90,138,140,0.25)',
+            },
+            fontFamily: {
+              inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-cream-50 text-base-900 font-inter antialiased relative">
+    <!-- Particles Background -->
+    <div id="particles-container" class="pointer-events-none fixed inset-0 z-0"></div>
+    <!-- Top nav -->
+    <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-cream-50/90">
+      <div class="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="relative h-6 w-6 rounded-lg bg-cream-50 border-2 border-accent-500 flex items-center justify-center shadow-sm shadow-accent-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 text-accent-500">
+              <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.25 7.3a1 1 0 0 1-1.42.008L3.29 9.26A1 1 0 0 1 4.71 7.84l3.01 3.01 6.54-6.556a1 1 0 0 1 1.444-.004z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <span class="text-base font-bold tracking-tight text-base-900">Done List</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-base-900/70">
+          <a class="hover:text-base-900" href="#features">Features</a>
+          <a class="hover:text-base-900" href="#pricing">Pricing</a>
+        </nav>
+        <a href="app.html" class="rounded-full bg-accent-500 hover:bg-accent-600 px-4 py-2 text-sm font-medium font-bold text-cream-50 shadow-glow transition">Get Started</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative z-10">
+      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_20%,rgba(90,138,140,0.15),transparent)]"></div>
+      <div class="relative mx-auto max-w-4xl px-4 pt-16 pb-10 text-center">
+        <div class="flex items-center justify-center gap-4 mb-2">
+          <div class="relative h-12 w-12 md:h-16 md:w-16 rounded-xl bg-cream-50 border-[3px] border-accent-500 flex items-center justify-center shadow-lg shadow-accent-500/25">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 md:h-8 md:w-8 text-accent-500">
+              <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.25 7.3a1 1 0 0 1-1.42.008L3.29 9.26A1 1 0 0 1 4.71 7.84l3.01 3.01 6.54-6.556a1 1 0 0 1 1.444-.004z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h1 class="text-4xl md:text-6xl font-bold leading-tight text-base-900 tracking-tight">
+            Done List
+          </h1>
+        </div>
+        <p class="mt-3 text-base-900/70 max-w-2xl mx-auto text-lg">
+          A smart to-do list that automatically suggests how to complete your tasks. Add a task, get AI-powered step-by-step guidance, and accomplish more with less effort.
+        </p>
+        <div class="mt-6">
+          <a href="app.html" class="inline-flex items-center rounded-full bg-accent-500 hover:bg-accent-600 px-5 py-3 text-sm font-semibold font-bold text-cream-50 shadow-glow transition">Get Started</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="relative z-10 px-4 py-20">
+      <div class="mx-auto max-w-4xl">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-semibold font-bold text-base-900 mb-4">
+            Smart Task Management That Helps You Get Things Done
+          </h2>
+          <p class="text-base-900/70 max-w-2xl mx-auto">
+            Done List isn't just a to-do app—it's your intelligent productivity partner that automatically suggests how to accomplish your tasks.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- AI Auto-Suggestions Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">AI Auto-Suggestions</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                When you add a task, our AI automatically analyzes it and suggests step-by-step instructions on how to complete it. No more wondering where to start—get actionable breakdowns instantly.
+              </p>
+            </div>
+          </div>
+
+          <!-- Smart Subtasks Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">Smart Subtasks</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                Break down complex tasks into manageable steps. AI suggestions automatically create subtasks that you can check off as you progress. When all subtasks are done, the main task completes automatically.
+              </p>
+            </div>
+          </div>
+
+          <!-- Calendar Integration Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">Calendar Integration</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                Assign tasks to specific dates and view them in a beautiful calendar view. Plan your week, track deadlines, and never miss an important task.
+              </p>
+            </div>
+          </div>
+
+          <!-- Everyday Tasks Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">Everyday Tasks</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                Mark tasks as "everyday" to create recurring routines. Perfect for daily habits, weekly reviews, or any task that needs regular attention.
+              </p>
+            </div>
+          </div>
+
+          <!-- Regenerate Suggestions Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">Regenerate Suggestions</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                Not happy with the AI suggestions? Click "Generate Better Version" to get alternative step-by-step approaches for completing your task.
+              </p>
+            </div>
+          </div>
+
+          <!-- Clean & Calm UI Feature -->
+          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="mb-4">
+              <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold font-bold text-base-900 mb-2">Clean & Calm UI</h3>
+              <p class="text-sm text-base-900/70 leading-relaxed">
+                A beautifully designed interface with a soothing color palette that helps you focus. Filter tasks, track progress, and stay organized without the overwhelm.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="mt-16 rounded-2xl bg-gradient-to-b from-accent-500/10 to-peach-500/10 ring-1 ring-accent-500/20 p-8">
+          <h3 class="text-2xl font-semibold font-bold text-base-900 mb-6 text-center">How It Works</h3>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+              <div class="h-16 w-16 rounded-full bg-accent-500 text-cream-50 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+              <h4 class="font-semibold font-bold text-base-900 mb-2">Add Your Task</h4>
+              <p class="text-sm text-base-900/70">Simply type what you need to do and press Enter</p>
+            </div>
+            <div class="text-center">
+              <div class="h-16 w-16 rounded-full bg-accent-500 text-cream-50 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+              <h4 class="font-semibold font-bold text-base-900 mb-2">AI Analyzes & Suggests</h4>
+              <p class="text-sm text-base-900/70">Our AI automatically breaks down your task into actionable steps</p>
+            </div>
+            <div class="text-center">
+              <div class="h-16 w-16 rounded-full bg-accent-500 text-cream-50 flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+              <h4 class="font-semibold font-bold text-base-900 mb-2">Get It Done</h4>
+              <p class="text-sm text-base-900/70">Follow the suggestions, check off subtasks, and watch your progress</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="relative z-10 px-4 pt-20 min-h-screen max-w-4xl mx-auto">
+      <article class="text-center mb-6 space-y-4 max-w-2xl mx-auto">
+        <h2 class="md:text-6xl text-4xl capitalize font-medium font-bold text-base-900 mb-4 pricing-title">
+          We've got a plan that's perfect for you
+        </h2>
+
+        <p class="md:text-base text-sm text-base-900/70 mx-auto pricing-description">
+          Trusted by millions, We help teams all around the world, Explore which
+          option is right for you.
+        </p>
+
+        <div class="pricing-switch-container">
+          <div id="pricing-switch" class="flex justify-center">
+            <div class="relative z-10 mx-auto flex w-fit rounded-xl bg-cream-50 border border-accent-500/30 p-1">
+              <button
+                id="monthly-btn"
+                class="relative z-10 w-fit cursor-pointer h-12 rounded-xl sm:px-6 px-3 sm:py-2 py-1 font-medium font-bold transition-colors sm:text-base text-sm text-cream-50 pricing-switch-btn"
+              >
+                <span class="relative">Monthly Billing</span>
+              </button>
+
+              <button
+                id="yearly-btn"
+                class="relative z-10 w-fit cursor-pointer h-12 flex-shrink-0 rounded-xl sm:px-6 px-3 sm:py-2 py-1 font-medium font-bold transition-colors sm:text-base text-sm text-base-900/70 hover:text-base-900 pricing-switch-btn"
+              >
+                <span class="relative flex items-center gap-2">
+                  Yearly Billing
+                  <span class="rounded-full bg-accent-500/20 px-2 py-0.5 text-xs font-medium font-bold text-base-900">
+                    Save 20%
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <div id="pricing-cards" class="grid md:grid-cols-3 gap-4 py-6">
+        <!-- Cards will be rendered by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative bg-gradient-to-b from-[#EBEFEF] to-[#DCE0DC] mt-16 w-full rounded-t-xl overflow-hidden">
+      
+      <div class="relative mx-auto max-w-4xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-24">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div>
+            <div class="text-base-900 flex justify-center items-center gap-3 sm:justify-start">
+              <div class="relative h-10 w-10 rounded-lg bg-cream-50 border-2 border-accent-500 flex items-center justify-center shadow-sm shadow-accent-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 text-accent-500">
+                  <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.25 7.3a1 1 0 0 1-1.42.008L3.29 9.26A1 1 0 0 1 4.71 7.84l3.01 3.01 6.54-6.556a1 1 0 0 1 1.444-.004z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span class="text-2xl font-bold tracking-tight">
+                Done List
+              </span>
+            </div>
+
+            <p class="text-base-900/70 mt-6 max-w-md text-center leading-relaxed sm:max-w-xs sm:text-left">
+              A smart to-do list that automatically suggests how to complete your tasks. Add a task, get AI-powered step-by-step guidance, and accomplish more with less effort.
+            </p>
+
+            <ul class="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">
+              <li>
+                <a
+                  href="https://twitter.com/donelist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-base-900/80 hover:text-base-900 transition"
+                  aria-label="Twitter"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/donelist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-base-900/80 hover:text-base-900 transition"
+                  aria-label="GitHub"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://instagram.com/donelist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-base-900/80 hover:text-base-900 transition"
+                  aria-label="Instagram"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:col-span-2">
+            <div class="text-center sm:text-left">
+              <p class="text-lg font-medium text-base-900">Product</p>
+              <ul class="mt-8 space-y-4 text-sm">
+                <li>
+                  <a
+                    href="#features"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#pricing"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="app.html"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Get Started
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="text-center sm:text-left">
+              <p class="text-lg font-medium text-base-900">Resources</p>
+              <ul class="mt-8 space-y-4 text-sm">
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Guides
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Tips & Tricks
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Product Updates
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="text-center sm:text-left">
+              <p class="text-lg font-medium text-base-900">Support</p>
+              <ul class="mt-8 space-y-4 text-sm">
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Contact Us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="group flex justify-center gap-1.5 sm:justify-start text-base-900/70 hover:text-base-900 transition"
+                  >
+                    <span>Live Chat</span>
+                    <span class="relative flex size-2">
+                      <span class="bg-accent-500 absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                      <span class="bg-accent-500 relative inline-flex size-2 rounded-full"></span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-base-900/70 hover:text-base-900 transition"
+                  >
+                    Status
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="text-center sm:text-left">
+              <p class="text-lg font-medium text-base-900">Contact</p>
+              <ul class="mt-8 space-y-4 text-sm">
+                <li>
+                  <a
+                    href="mailto:hello@donelist.com"
+                    class="flex items-center justify-center gap-1.5 sm:justify-start text-base-900/70 hover:text-base-900 transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-accent-500 size-5 shrink-0 shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="flex-1">hello@donelist.com</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+1234567890"
+                    class="flex items-center justify-center gap-1.5 sm:justify-start text-base-900/70 hover:text-base-900 transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-accent-500 size-5 shrink-0 shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span class="flex-1">+1 (234) 567-890</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="flex items-center justify-center gap-1.5 sm:justify-start text-base-900/70 hover:text-base-900 transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-accent-500 size-5 shrink-0 shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <address class="text-base-900/70 -mt-0.5 flex-1 not-italic transition">
+                      San Francisco, CA, USA
+                    </address>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 border-t border-base-900/20 pt-6">
+          <div class="text-center sm:flex sm:justify-between sm:text-left">
+            <p class="text-sm text-base-900/70">
+              <span class="block sm:inline">All rights reserved.</span>
+            </p>
+
+            <p class="text-base-900/70 mt-4 text-sm transition sm:order-first sm:mt-0">
+              &copy; 2025 Done List
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./pricing.js"></script>
+  </body>
+  </html>
+
+

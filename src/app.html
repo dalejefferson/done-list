@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Done List - Your Tasks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              base: {
+                900: '#1A2F30', // Very dark teal/black-green (bottom stripe)
+                800: '#243A3B', // Dark teal
+                700: '#2F4A4B', // Medium dark teal
+              },
+              accent: {
+                500: '#5A8A8C', // Deep muted teal (third stripe)
+                600: '#4A7C7E', // Deeper teal
+              },
+              peach: {
+                500: '#D4A574', // Warm muted peach/terracotta (second stripe)
+                600: '#C89A6A', // Darker peach
+              },
+              cream: {
+                50: '#F8F4F0', // Very light pink/cream (top stripe)
+                100: '#F5F0E8', // Light cream
+              },
+              orange: {
+                50: '#fff7ed',
+                400: '#fb923c',
+                500: '#f97316',
+                600: '#ea580c',
+              },
+            },
+            boxShadow: {
+              glow: '0 10px 40px rgba(90,138,140,0.25)',
+            },
+            fontFamily: {
+              inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  </head>
+  <body class="min-h-screen bg-cream-50 text-base-900 font-inter antialiased relative">
+    <!-- Particles Background -->
+    <div id="particles-container" class="pointer-events-none fixed inset-0 z-0"></div>
+    
+    <!-- Top nav -->
+    <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-cream-50/90">
+      <div class="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
+          <div class="relative h-6 w-6 rounded-lg bg-cream-50 border-2 border-accent-500 flex items-center justify-center shadow-sm shadow-accent-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 text-accent-500">
+              <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.25 7.3a1 1 0 0 1-1.42.008L3.29 9.26A1 1 0 0 1 4.71 7.84l3.01 3.01 6.54-6.556a1 1 0 0 1 1.444-.004z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <span class="text-base font-bold tracking-tight text-base-900">Done List</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-base-900/70">
+          <a class="hover:text-base-900" href="index.html#features">Features</a>
+          <a class="hover:text-base-900" href="index.html#pricing">Pricing</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="rounded-full bg-accent-500 hover:bg-accent-600 px-4 py-2 text-sm font-medium font-bold text-cream-50 shadow-glow transition">Back to Home</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- App Card -->
+    <main id="app" class="relative z-10 mx-auto max-w-4xl px-4 py-8 pb-24">
+      <!-- Calendar Page (hidden by default, shown when hash is #calendar) -->
+      <div id="calendar-page" class="hidden">
+        <div class="max-w-3xl mx-auto">
+          <div class="mb-6 flex items-center justify-between">
+            <button id="back-to-app-btn" class="rounded-full bg-accent-500 hover:bg-accent-600 px-4 py-2 text-sm font-semibold font-bold text-cream-50 shadow-glow transition flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+              </svg>
+              Back to Tasks
+            </button>
+          </div>
+          <!-- Calendar Section -->
+          <section class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-semibold font-bold text-base-900">Calendar</h2>
+              <div class="flex items-center gap-2">
+                <button id="calendar-prev-month" class="rounded-lg bg-accent-500/20 hover:bg-accent-500/30 px-3 py-1 text-sm text-base-900 transition">←</button>
+                <span id="calendar-month-year" class="text-sm font-medium text-base-900">January 2025</span>
+                <button id="calendar-next-month" class="rounded-lg bg-accent-500/20 hover:bg-accent-500/30 px-3 py-1 text-sm text-base-900 transition">→</button>
+              </div>
+            </div>
+            <div id="calendar-grid" class="grid grid-cols-7 gap-2">
+              <!-- Calendar days will be rendered here -->
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Task Creation Modal -->
+      <div id="task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-base-900/50 backdrop-blur-sm" id="task-modal-backdrop"></div>
+        
+        <!-- Modal Card -->
+        <div class="relative z-10 w-full max-w-md rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <h3 id="task-modal-title" class="text-lg font-semibold font-bold text-base-900 mb-4">Create a task</h3>
+          
+          <form id="task-modal-form" class="flex flex-col gap-4">
+            <label for="task-modal-input" class="sr-only">Task title</label>
+            <input 
+              id="task-modal-input" 
+              type="text" 
+              placeholder="Write a task and press Enter..."
+              class="rounded-xl bg-cream-50 ring-1 ring-accent-500/30 focus:ring-accent-500 focus:outline-none px-4 py-3 text-sm placeholder:text-base-900/50 text-base-900"
+              autocomplete="off"
+            />
+            
+            <div class="flex gap-2 justify-end">
+              <button 
+                type="button" 
+                id="task-modal-cancel"
+                class="rounded-xl bg-accent-500/20 hover:bg-accent-500/30 px-4 py-3 text-sm font-medium font-bold text-base-900 transition"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit"
+                class="rounded-xl bg-accent-500 hover:bg-accent-600 px-4 py-3 text-sm font-medium font-bold text-cream-50 shadow-glow transition"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Main App Content (hidden when hash is #calendar) -->
+      <div id="main-app-content">
+      <div class="flex flex-col gap-8">
+        <!-- Your Tasks Card -->
+        <section class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl flex flex-col">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold font-bold text-base-900">Your Tasks</h2>
+            <button id="clear-completed" class="text-xs text-base-900/60 hover:text-base-900">Clear completed</button>
+          </div>
+
+          <!-- Input -->
+          <form id="todo-form" class="mt-4 flex gap-2" autocomplete="off">
+            <label for="todo-input" class="sr-only">Add a task</label>
+            <input id="todo-input" name="todo" type="text" placeholder="Write a task and press Enter..."
+              class="flex-1 rounded-xl bg-cream-50 ring-1 ring-accent-500/30 focus:ring-accent-500 focus:outline-none px-4 py-3 text-sm placeholder:text-base-900/50 text-base-900" />
+            <button type="submit" class="rounded-xl bg-accent-500 hover:bg-accent-600 px-4 py-3 text-sm font-medium font-bold text-cream-50 shadow-glow transition">Add</button>
+          </form>
+
+          <!-- AI Suggestions Section (inside create task box) -->
+          <div id="ai-suggestions-section" class="hidden mt-4">
+            <div class="rounded-xl bg-cream-50/80 ring-1 ring-accent-500/20 p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-base-900">AI Suggestions</h4>
+                <div class="flex items-center gap-2">
+                  <button id="regenerate-ai-btn" class="hidden text-xs text-accent-600 hover:text-accent-500 font-medium font-bold px-2 py-1 rounded-md hover:bg-accent-500/10 transition">Regenerate</button>
+                  <span id="chat-ai-status" class="text-xs text-base-900/60"></span>
+                </div>
+              </div>
+              <ul id="chat-ai-steps" class="space-y-2 max-h-48 overflow-y-auto" aria-live="polite"></ul>
+            </div>
+          </div>
+
+          <!-- List -->
+          <ul id="todo-list" class="mt-4 space-y-2" aria-live="polite"></ul>
+
+          <!-- Controls -->
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <p id="todo-count" class="text-xs text-base-900/60">0 items</p>
+            <div class="flex items-center gap-2 text-xs">
+              <button data-filter="all" class="filter-btn rounded-full px-3 py-1 bg-accent-500/20 text-base-900/70 hover:text-base-900">All</button>
+              <button data-filter="active" class="filter-btn rounded-full px-3 py-1 bg-accent-500/20 text-base-900/70 hover:text-base-900">Active</button>
+              <button data-filter="completed" class="filter-btn rounded-full px-3 py-1 bg-accent-500/20 text-base-900/70 hover:text-base-900">Completed</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Calendar Button -->
+        <div class="flex justify-center">
+          <button id="open-calendar-btn" class="rounded-full bg-accent-500 hover:bg-accent-600 px-6 py-3 text-sm font-semibold font-bold text-cream-50 shadow-glow transition flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+            Open Calendar
+          </button>
+        </div>
+      </div>
+      </div>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./calendar.js"></script>
+  </body>
+</html>
+
