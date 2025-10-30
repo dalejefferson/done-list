@@ -42,8 +42,14 @@ app.get('/', (_req, res) => {
 
 app.use('/api/ai', aiRouter);
 
-// Serve index.html for /index route (landing page)
+// Serve index.html for /index route (landing page with pricing)
 app.get('/index.html', (_req, res) => {
+  const indexPath = path.join(staticPath, 'index.html');
+  res.sendFile(path.resolve(indexPath));
+});
+
+// Serve index.html for /index route as well
+app.get('/index', (_req, res) => {
   const indexPath = path.join(staticPath, 'index.html');
   res.sendFile(path.resolve(indexPath));
 });
