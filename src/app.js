@@ -33,7 +33,10 @@ const chatAiStepsEl = document.getElementById('chat-ai-steps');
 const regenerateAiBtn = document.getElementById('regenerate-ai-btn');
 const openCalendarBtn = document.getElementById('open-calendar-btn');
 
-const API_BASE = 'http://localhost:3001';
+// API Base URL - use current origin in production, localhost in development
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3001'
+  : window.location.origin;
 
 // Single-flight guard for AI calls to avoid bursts
 let aiRequestInFlight = false;

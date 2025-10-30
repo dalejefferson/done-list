@@ -21,7 +21,14 @@ app.use(express.json({ limit: '512kb' }));
 // Serve static files from src directory
 // In Vercel, files are relative to the function directory (src/)
 const staticPath = process.env.VERCEL || process.env.VERCEL_ENV ? path.join(__dirname) : 'src';
-app.use(express.static(staticPath));
+app.use(express.static(staticPath, {
+  setHeaders: (res, filePath) => {
+    // Set correct MIME types for JavaScript modules
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    }
+  }
+}));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
