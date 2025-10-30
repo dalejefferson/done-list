@@ -27,18 +27,24 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Root route - serve index.html
+// Root route - serve app.html (the to-do list app)
 app.get('/', (_req, res) => {
-  const indexPath = path.join(staticPath, 'index.html');
-  res.sendFile(path.resolve(indexPath));
+  const appPath = path.join(staticPath, 'app.html');
+  res.sendFile(path.resolve(appPath));
 });
 
 app.use('/api/ai', aiRouter);
 
-// Fallback for all other routes - serve index.html for SPA routing
-app.get('*', (_req, res) => {
+// Serve index.html for /index route (landing page)
+app.get('/index.html', (_req, res) => {
   const indexPath = path.join(staticPath, 'index.html');
   res.sendFile(path.resolve(indexPath));
+});
+
+// Fallback for all other routes - serve app.html for SPA routing
+app.get('*', (_req, res) => {
+  const appPath = path.join(staticPath, 'app.html');
+  res.sendFile(path.resolve(appPath));
 });
 
 // Export for Vercel serverless function
