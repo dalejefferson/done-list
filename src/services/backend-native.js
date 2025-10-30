@@ -127,6 +127,17 @@ export const backend = {
     };
     await writeTodos(todos);
     return todos[idx];
+  },
+
+  /** @param {string} todoId */
+  /** @param {object} aiAnalysis */
+  async updateAIAnalysis(todoId, aiAnalysis) {
+    const todos = await readTodos();
+    const idx = todos.findIndex(t => t.id === todoId);
+    if (idx === -1) return null;
+    todos[idx] = { ...todos[idx], aiAnalysis };
+    await writeTodos(todos);
+    return todos[idx];
   }
 };
 

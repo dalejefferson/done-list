@@ -142,17 +142,6 @@ Errors:
 - Cache last analysis per task id
 - Stronger schema validation
 
-## Alternative Backends
-
-The app architecture supports swapping backends. Alternative implementations are available:
-- `src/services/backend-supabase.js` - Supabase PostgreSQL backend (requires authentication)
-- `src/services/backend-native-supabase.js` - Supabase backend for React Native
-
-To switch to Supabase backend, change the import:
-- Web: Change `import { backend } from './services/backend.js'` to `import { backend } from './services/backend-supabase.js'`
-- React Native: Change `import { backend } from '../src/services/backend-native'` to `import { backend } from '../src/services/backend-native-supabase'`
-
-Note: Switching to Supabase requires authentication setup and database configuration.
 
 ## Future Work
 - [ ] Add data export/import functionality

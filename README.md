@@ -49,8 +49,6 @@ Create a `.env.local` file in the root directory (see `env.example` for all avai
 
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your_supabase_anon_key_here
 PORT=3001
 ```
 
@@ -117,8 +115,6 @@ This app is configured for deployment on Vercel with serverless functions.
    
    ```
    OPENAI_API_KEY=your_openai_api_key_here
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your_supabase_anon_key_here
    OPENAI_MODEL=gpt-3.5-turbo (optional)
    AI_MAX_TOKENS=1200 (optional)
    ```
@@ -136,8 +132,6 @@ This app is configured for deployment on Vercel with serverless functions.
 All environment variables are securely stored in Vercel's dashboard and never exposed in the codebase. The following variables are required:
 
 - `OPENAI_API_KEY` - Your OpenAI API key for AI features
-- `SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_ANON_KEY` - Your Supabase anonymous key (safe to expose in frontend)
 
 Optional variables:
 - `OPENAI_MODEL` - Model to use (default: `gpt-3.5-turbo`)
@@ -158,7 +152,6 @@ Optional variables:
 - ✅ All API keys are stored as environment variables
 - ✅ No secrets are committed to the repository
 - ✅ `.env*` files are excluded via `.gitignore`
-- ✅ Supabase anon key is safe to expose in frontend (designed for client-side use)
 
 ## License
 

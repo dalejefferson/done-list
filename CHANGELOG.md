@@ -2,10 +2,22 @@
 
 ## [Unreleased]
 
+### Removed
+- 🗑️ **REMOVED**: Completely removed all Supabase-related code and dependencies
+  - ✅ Deleted `src/services/backend-supabase.js` (Supabase backend for web)
+  - ✅ Deleted `src/services/backend-native-supabase.js` (Supabase backend for React Native)
+  - ✅ Deleted `src/services/auth.js` (Supabase authentication service)
+  - ✅ Deleted `GOOGLE_OAUTH_SETUP.md` (Supabase-specific OAuth setup guide)
+  - ✅ Deleted `src/signin.js` and `src/signin.html` (Supabase authentication pages)
+  - ✅ Removed `@supabase/supabase-js` dependency from `package.json`
+  - ✅ Removed all Supabase environment variables from `env.example`
+  - ✅ Updated `app/index.js` to use `backend-native.js` instead of `backend-native-supabase.js`
+  - ✅ Added `updateAIAnalysis` method to `backend.js` and `backend-native.js` for consistency
+  - ✅ Removed all Supabase references from `README.md` and `backend.md`
+
 ### Security & Deployment
 - 🔒 **SECURITY**: Moved all API keys to environment variables
-  - ✅ Removed all hardcoded Supabase URLs and keys from `src/services/backend-supabase.js`, `src/services/auth.js`, and `src/services/backend-native-supabase.js`
-  - ✅ All services now read exclusively from environment variables (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, etc.)
+  - ✅ All services now read exclusively from environment variables
   - ✅ Services now warn when environment variables are missing (no hardcoded fallbacks)
   - ✅ Created `env.example` file as a template for required environment variables
 - 🚀 **DEPLOYMENT**: Added Vercel deployment configuration

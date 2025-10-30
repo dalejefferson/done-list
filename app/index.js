@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { backend } from '../src/services/backend-native-supabase';
+import { backend } from '../src/services/backend-native';
 
 // API Base URL configuration
 // For iOS Simulator: use localhost

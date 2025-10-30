@@ -130,6 +130,17 @@ export const backend = {
     };
     writeTodos(todos);
     return delay(todos[idx]);
+  },
+
+  /** @param {string} todoId */
+  /** @param {object} aiAnalysis */
+  async updateAIAnalysis(todoId, aiAnalysis) {
+    const todos = readTodos();
+    const idx = todos.findIndex(t => t.id === todoId);
+    if (idx === -1) return delay(null);
+    todos[idx] = { ...todos[idx], aiAnalysis };
+    writeTodos(todos);
+    return delay(todos[idx]);
   }
 };
 
