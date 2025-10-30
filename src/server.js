@@ -27,8 +27,14 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/ai', aiRouter);
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-  console.log(`AI Analyst API listening on http://localhost:${port}`);
-});
+// Export for Vercel serverless function
+export default app;
+
+// Only start server if running locally (not on Vercel)
+if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
+  const port = process.env.PORT || 3001;
+  app.listen(port, () => {
+    console.log(`AI Analyst API listening on http://localhost:${port}`);
+  });
+}
 

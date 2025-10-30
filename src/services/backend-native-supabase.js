@@ -5,9 +5,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase configuration
-const SUPABASE_URL = 'https://bmtqecovjalcgieoeyqx.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdHFlY292amFsY2dpZW9leXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NDQ5NjAsImV4cCI6MjA3NzQyMDk2MH0.rj3pOMJsXglQ-rCQxjLeVbQ0EPMZAEVxvZKqGGtnhrk';
+// Supabase configuration - uses environment variables
+// Note: For React Native, these should be set via app.json or config file
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://bmtqecovjalcgieoeyqx.supabase.co';
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+
+if (!SUPABASE_ANON_KEY) {
+  console.warn('Warning: SUPABASE_ANON_KEY not set. Supabase features may not work.');
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

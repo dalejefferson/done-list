@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Security & Deployment
+- 🔒 **SECURITY**: Moved all API keys to environment variables
+  - Removed hardcoded Supabase keys from `src/services/backend-supabase.js`, `src/services/auth.js`, and `src/services/backend-native-supabase.js`
+  - All services now read from environment variables (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, etc.)
+  - Added fallback values for development but warns when keys are missing
+  - Created `env.example` file as a template for required environment variables
+- 🚀 **DEPLOYMENT**: Added Vercel deployment configuration
+  - Created `vercel.json` for serverless function deployment
+  - Updated `src/server.js` to work as Vercel serverless function (exports Express app)
+  - Server automatically detects Vercel environment and skips `app.listen()` when deployed
+  - Updated README with comprehensive Vercel deployment instructions
+  - All environment variables documented for easy setup in Vercel dashboard
+
 ### Enhanced
 - Improved particles background animation
   - Increased particle size from 0.4 to 0.7 for better visibility
