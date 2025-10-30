@@ -10,16 +10,29 @@ const STORAGE_KEY = 'done_list_todos_v1';
 
 function readTodos() {
   try {
+    if (typeof localStorage === 'undefined') {
+      console.error('localStorage is not available');
+      return [];
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
-  } catch (_) {
+  } catch (error) {
+    console.error('Error reading todos from localStorage:', error);
     return [];
   }
 }
 
 function writeTodos(todos) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  try {
+    if (typeof localStorage === 'undefined') {
+      console.error('localStorage is not available');
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  } catch (error) {
+    console.error('Error writing todos to localStorage:', error);
+  }
 }
 
 function uid() {
