@@ -5,12 +5,12 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase configuration - uses environment variables
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://bmtqecovjalcgieoeyqx.supabase.co';
+// Supabase configuration - uses environment variables only
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-if (!SUPABASE_ANON_KEY) {
-  console.warn('Warning: SUPABASE_ANON_KEY not set. Supabase features may not work.');
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.warn('Warning: SUPABASE_URL and/or SUPABASE_ANON_KEY not set. Supabase features may not work.');
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
