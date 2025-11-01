@@ -14,31 +14,15 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { backend } from '../src/services/backend-native';
 
-// API Base URL configuration
-// For iOS Simulator: use localhost
-// For Physical iPhone: use your computer's local IP (e.g., 192.168.2.70)
-// Find your IP: Mac/Linux: `ifconfig | grep "inet " | grep -v 127.0.0.1`
-//                Windows: `ipconfig` (look for IPv4 Address)
+// API Base URL configuration - always use localhost for local storage
+// Android emulator uses 10.0.2.2 to access host localhost
+// iOS Simulator uses localhost directly
 const getApiBase = () => {
-  if (!__DEV__) {
-    return 'https://your-production-api.com'; // Update for production
-  }
-  
   if (Platform.OS === 'android') {
-    return 'http://10.0.2.2:3001'; // Android emulator
+    return 'http://10.0.2.2:3001'; // Android emulator maps 10.0.2.2 to host localhost
   }
   
-  // For iOS, check if running on physical device
-  // In Expo, we can detect this, but for now, you can manually set:
-  // Change this to your computer's local IP when testing on physical iPhone
-  const USE_PHYSICAL_DEVICE = true; // Set to true and update IP below when testing on real iPhone
-  const LOCAL_IP = '192.168.2.70'; // Your computer's local IP (found via ifconfig)
-  
-  if (USE_PHYSICAL_DEVICE) {
-    return `http://${LOCAL_IP}:3001`;
-  }
-  
-  return 'http://localhost:3001'; // iOS Simulator
+  return 'http://localhost:3001'; // iOS Simulator and local development
 };
 
 const API_BASE = getApiBase();
@@ -75,6 +59,7 @@ export default function HomeScreen() {
   const [aiRequestInFlight, setAiRequestInFlight] = useState(false);
   const [currentAnalyzedTask, setCurrentAnalyzedTask] = useState(null);
   const [currentAnalyzedTodoId, setCurrentAnalyzedTodoId] = useState(null);
+  const [previousTodoId, setPreviousTodoId] = useState(null);
 
   const loadTodos = useCallback(async () => {
     const loadedTodos = await backend.listTodos();
@@ -97,9 +82,18 @@ export default function HomeScreen() {
   const addTodo = async () => {
     if (!inputText.trim()) return;
     
+    // Collapse the previous task if it exists
+    if (previousTodoId) {
+      const previousTodo = todos.find(t => t.id === previousTodoId);
+      if (previousTodo && !manuallyExpandedTodos.has(previousTodoId)) {
+        setCollapsedTodos(prev => new Set(prev).add(previousTodoId));
+      }
+    }
+    
     const newTodo = await backend.createTodo(inputText.trim());
     if (newTodo) {
       setInputText('');
+      setPreviousTodoId(newTodo.id);
       await loadTodos();
       analyzeTaskWithAI(newTodo.title, newTodo.id).catch(() => {});
     }
@@ -236,7 +230,64 @@ export default function HomeScreen() {
         throw new Error(errorData?.details || errorData?.error || `Request failed (${res.status})`);
       }
       
-      const json = await res.json();
+      // Check if response is streaming (text/event-stream) or regular JSON
+      const contentType = res.headers.get('content-type') || '';
+      let json = null;
+      
+      if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullText = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'chunk') {
+                  fullText += data.content;
+                  setAiStatus('Generating suggestions…');
+                } else if (data.type === 'complete') {
+                  json = data;
+                  break;
+                } else if (data.type === 'error') {
+                  throw new Error(data.error || 'AI analysis failed');
+                }
+              } catch (e) {
+                // Skip malformed JSON lines
+              }
+            }
+          }
+          
+          if (json) break;
+        }
+        
+        if (!json) {
+          // Try to parse accumulated text as JSON
+          try {
+            const match = fullText.match(/\{[\s\S]*\}$/);
+            if (match) {
+              json = { result: JSON.parse(match[0]) };
+            } else {
+              throw new Error('Invalid response from AI');
+            }
+          } catch (e) {
+            throw new Error('Failed to parse AI response');
+          }
+        }
+      } else {
+        // Fallback to regular JSON response
+        json = await res.json();
+      }
       
       // Save the full AI analysis response to the database
       const fullAnalysis = json?.result;
@@ -543,11 +594,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: colors.cream[50],
+    backgroundColor: 'rgba(248, 244, 240, 0.7)',
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.accent[500] + '33',
+    borderBottomColor: colors.accent[500] + '26',
   },
   headerRow: {
     flexDirection: 'row',
@@ -610,14 +661,14 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 16,
-    backgroundColor: colors.peach[500] + '33',
+    backgroundColor: 'rgba(248, 244, 240, 0.4)',
     borderWidth: 1,
     borderColor: colors.accent[500] + '33',
     padding: 24,
     marginBottom: 24,
     shadowColor: colors.accent[500],
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 5,
   },
@@ -665,24 +716,31 @@ const styles = StyleSheet.create({
     color: colors.cream[50],
   },
   emptyState: {
-    backgroundColor: colors.accent[500] + '1A',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 16,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   emptyStateText: {
     fontSize: 12,
     color: colors.base[900] + '99',
   },
   todoItem: {
-    backgroundColor: colors.accent[500] + '1A',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: colors.accent[500] + '33',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    shadowColor: colors.accent[500],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 2,
   },
   todoRow: {
     flexDirection: 'row',
@@ -756,11 +814,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: colors.accent[500] + '0D',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 8,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   subCheckbox: {
     height: 16,
@@ -835,9 +895,9 @@ const styles = StyleSheet.create({
   },
   aiContainer: {
     borderRadius: 12,
-    backgroundColor: colors.cream[50] + 'CC',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderWidth: 1,
-    borderColor: colors.accent[500] + '33',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     padding: 16,
     maxHeight: 256,
   },
@@ -848,13 +908,18 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
   aiStep: {
-    backgroundColor: colors.accent[500] + '1A',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.accent[500] + '33',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    shadowColor: colors.accent[500],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 1,
   },
   aiStepTitle: {
     fontSize: 16,

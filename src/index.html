@@ -52,7 +52,7 @@
     <!-- Particles Background -->
     <div id="particles-container" class="pointer-events-none fixed inset-0 z-0"></div>
     <!-- Top nav -->
-    <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-cream-50/90">
+    <header class="sticky top-0 z-30 glass-nav">
       <div class="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="relative h-6 w-6 rounded-lg bg-cream-50 border-2 border-accent-500 flex items-center justify-center shadow-sm shadow-accent-500/20">
@@ -107,7 +107,7 @@
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- AI Auto-Suggestions Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -122,7 +122,7 @@
           </div>
 
           <!-- Smart Subtasks Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -137,7 +137,7 @@
           </div>
 
           <!-- Calendar Integration Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -152,7 +152,7 @@
           </div>
 
           <!-- Everyday Tasks Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -167,7 +167,7 @@
           </div>
 
           <!-- Regenerate Suggestions Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -182,7 +182,7 @@
           </div>
 
           <!-- Clean & Calm UI Feature -->
-          <div class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <div class="rounded-2xl glass-card p-6">
             <div class="mb-4">
               <div class="h-12 w-12 rounded-xl bg-accent-500/20 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6 text-accent-600">
@@ -199,7 +199,7 @@
         </div>
 
         <!-- How It Works Section -->
-        <div class="mt-16 rounded-2xl bg-gradient-to-b from-accent-500/10 to-peach-500/10 ring-1 ring-accent-500/20 p-8">
+        <div class="mt-16 rounded-2xl glass-card p-8">
           <h3 class="text-2xl font-semibold font-bold text-base-900 mb-6 text-center">How It Works</h3>
           <div class="grid md:grid-cols-3 gap-8">
             <div class="text-center">
@@ -237,7 +237,7 @@
 
         <div class="pricing-switch-container">
           <div id="pricing-switch" class="flex justify-center">
-            <div class="relative z-10 mx-auto flex w-fit rounded-xl bg-cream-50 border border-accent-500/30 p-1">
+            <div class="relative z-10 mx-auto flex w-fit rounded-xl glass-light border border-accent-500/30 p-1">
               <button
                 id="monthly-btn"
                 class="relative z-10 w-fit cursor-pointer h-12 rounded-xl sm:px-6 px-3 sm:py-2 py-1 font-medium font-bold transition-colors sm:text-base text-sm text-cream-50 pricing-switch-btn"
@@ -261,7 +261,7 @@
         </div>
       </article>
 
-      <div id="pricing-cards" class="grid md:grid-cols-3 gap-4 py-6">
+      <div id="pricing-cards" class="grid md:grid-cols-3 gap-6 py-6">
         <!-- Cards will be rendered by JavaScript -->
       </div>
     </section>

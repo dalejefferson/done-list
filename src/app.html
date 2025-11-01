@@ -54,7 +54,7 @@
     <div id="particles-container" class="pointer-events-none fixed inset-0 z-0"></div>
     
     <!-- Top nav -->
-    <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-cream-50/90">
+    <header class="sticky top-0 z-30 glass-nav">
       <div class="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
         <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition">
           <div class="relative h-6 w-6 rounded-lg bg-cream-50 border-2 border-accent-500 flex items-center justify-center shadow-sm shadow-accent-500/20">
@@ -88,7 +88,7 @@
             </button>
           </div>
           <!-- Calendar Section -->
-          <section class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+          <section class="rounded-2xl glass-card p-6">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-semibold font-bold text-base-900">Calendar</h2>
               <div class="flex items-center gap-2">
@@ -110,7 +110,7 @@
         <div class="absolute inset-0 bg-base-900/50 backdrop-blur-sm" id="task-modal-backdrop"></div>
         
         <!-- Modal Card -->
-        <div class="relative z-10 w-full max-w-md rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl">
+        <div class="relative z-10 w-full max-w-md rounded-2xl glass-card p-6">
           <h3 id="task-modal-title" class="text-lg font-semibold font-bold text-base-900 mb-4">Create a task</h3>
           
           <form id="task-modal-form" class="flex flex-col gap-4">
@@ -146,7 +146,7 @@
       <div id="main-app-content">
       <div class="flex flex-col gap-8">
         <!-- Your Tasks Card -->
-        <section class="rounded-2xl bg-gradient-to-b from-peach-500/20 to-accent-500/20 ring-1 ring-accent-500/20 p-6 shadow-xl flex flex-col">
+        <section class="rounded-2xl glass-card p-6 flex flex-col">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold font-bold text-base-900">Your Tasks</h2>
             <button id="clear-completed" class="text-xs text-base-900/60 hover:text-base-900">Clear completed</button>
@@ -162,7 +162,7 @@
 
           <!-- AI Suggestions Section (inside create task box) -->
           <div id="ai-suggestions-section" class="hidden mt-4">
-            <div class="rounded-xl bg-cream-50/80 ring-1 ring-accent-500/20 p-4">
+            <div class="rounded-xl glass-light p-4">
               <div class="flex items-center justify-between mb-3">
                 <h4 class="text-sm font-semibold text-base-900">AI Suggestions</h4>
                 <div class="flex items-center gap-2">

@@ -12,14 +12,24 @@ import { Particles } from './utils/particles.js';
 /** @type {Todo[]} */
 let todos = [];
 let currentFilter = 'all'; // 'all' | 'active' | 'completed'
-/** @type {Set<string>} */
-const collapsedTodos = new Set(); // Track which todos have collapsed subtasks
-/** @type {Set<string>} */
-const manuallyExpandedTodos = new Set(); // Track which todos user has manually expanded
+// Track which todos have collapsed subtasks (shared across modules)
+if (typeof window.collapsedTodos === 'undefined') {
+  window.collapsedTodos = new Set();
+}
+const collapsedTodos = window.collapsedTodos;
+// Track which todos user has manually expanded (shared across modules)
+if (typeof window.manuallyExpandedTodos === 'undefined') {
+  window.manuallyExpandedTodos = new Set();
+}
+const manuallyExpandedTodos = window.manuallyExpandedTodos;
 /** @type {Map<string, boolean>} */
 const previousTodoStates = new Map(); // Track previous completion states to detect transitions
 /** @type {Set<string>} */
 const hiddenTodos = new Set(); // Track todos that should be hidden after completion animation
+// Track the previously created task ID to collapse it when a new task is added (shared across modules)
+if (typeof window.previousTodoId === 'undefined') {
+  window.previousTodoId = null;
+}
 
 const listEl = document.getElementById('todo-list');
 const countEl = document.getElementById('todo-count');
@@ -33,16 +43,16 @@ const chatAiStepsEl = document.getElementById('chat-ai-steps');
 const regenerateAiBtn = document.getElementById('regenerate-ai-btn');
 const openCalendarBtn = document.getElementById('open-calendar-btn');
 
-// API Base URL - use current origin in production, localhost in development
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:3001'
-  : window.location.origin;
+// API Base URL - always use localhost for local storage
+const API_BASE = 'http://localhost:3001';
 
 // Single-flight guard for AI calls to avoid bursts
 let aiRequestInFlight = false;
 // Track current task being analyzed for regeneration
 let currentAnalyzedTask = null;
 let currentAnalyzedTodoId = null;
+// Track which task is currently being analyzed (for showing spinner in task)
+let analyzingTodoId = null;
 
 // Page elements for routing
 const calendarPageEl = document.getElementById('calendar-page');
@@ -64,6 +74,14 @@ async function loadTodos() {
 }
 
 async function addTodo(title, assignedDate) {
+  // Collapse the previous task if it exists
+  if (window.previousTodoId) {
+    const previousTodo = todos.find(t => t.id === window.previousTodoId);
+    if (previousTodo && !manuallyExpandedTodos.has(window.previousTodoId)) {
+      collapsedTodos.add(window.previousTodoId);
+    }
+  }
+  
   const newTodo = await backend.createTodo(title, assignedDate);
   await loadTodos();
   render();
@@ -73,12 +91,12 @@ async function addTodo(title, assignedDate) {
 
   // Fire-and-update: ask AI for suggestions for the newly added task
   if (newTodo) {
-    // Show loading state immediately when task is created
-    if (aiSuggestionsSectionEl) aiSuggestionsSectionEl.classList.remove('hidden');
-    if (chatAiStatusEl) {
-      chatAiStatusEl.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-3 w-3 text-accent-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Analyzing task...</span>';
-    }
-    if (chatAiStepsEl) chatAiStepsEl.innerHTML = '';
+    // Track this as the previous task for next time
+    window.previousTodoId = newTodo.id;
+    
+    // Set the analyzing task ID to show spinner in the task item
+    analyzingTodoId = newTodo.id;
+    render(); // Re-render to show spinner in task
     
     analyzeTaskWithAI(title, newTodo.id).catch(() => {
       // errors are surfaced to status element; no throw
@@ -199,7 +217,7 @@ function renderList() {
   listEl.innerHTML = '';
   if (items.length === 0) {
     const empty = document.createElement('li');
-    empty.className = 'text-xs text-base-900/60 px-3 py-4 text-center bg-accent-500/10 rounded-xl';
+    empty.className = 'text-xs text-base-900/60 px-3 py-4 text-center glass-light rounded-xl';
     empty.textContent = 'No tasks yet. Add one above!';
     listEl.appendChild(empty);
     return;
@@ -208,7 +226,7 @@ function renderList() {
   items.forEach(todo => {
     const li = document.createElement('li');
     li.setAttribute('data-todo-id', todo.id);
-    li.className = 'group bg-accent-500/10 hover:bg-accent-500/20 rounded-xl px-3 py-3 ring-1 ring-accent-500/20 transition';
+    li.className = 'group glass-light hover:glass rounded-xl px-3 py-3 transition';
 
     const mainRow = document.createElement('div');
     mainRow.className = 'flex items-center gap-3';
@@ -293,6 +311,14 @@ function renderList() {
     }
     mainRow.appendChild(dateBtn);
     mainRow.appendChild(del);
+    
+    // Add AI loading spinner on the right side if this task is being analyzed
+    if (analyzingTodoId === todo.id) {
+      const aiSpinner = document.createElement('div');
+      aiSpinner.className = 'flex items-center justify-center ml-2';
+      aiSpinner.innerHTML = '<svg class="animate-spin h-4 w-4 text-accent-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+      mainRow.appendChild(aiSpinner);
+    }
     li.appendChild(mainRow);
 
     // Render sub-tasks if they exist
@@ -303,7 +329,7 @@ function renderList() {
       
       todo.subTasks.forEach(subTask => {
         const subLi = document.createElement('div');
-        subLi.className = 'flex items-center gap-2 bg-accent-500/5 hover:bg-accent-500/10 rounded-lg px-2 py-2';
+        subLi.className = 'flex items-center gap-2 glass-light hover:glass rounded-lg px-2 py-2';
 
         const subCheckbox = document.createElement('button');
         subCheckbox.setAttribute('aria-pressed', String(subTask.completed));
@@ -426,7 +452,7 @@ function renderAISteps(steps) {
   chatAiStepsEl.innerHTML = '';
   if (!Array.isArray(steps) || steps.length === 0) {
     const li = document.createElement('li');
-    li.className = 'text-sm text-base-900/60 px-4 py-6 bg-accent-500/10 rounded-xl text-center';
+    li.className = 'text-sm text-base-900/60 px-4 py-6 glass-light rounded-xl text-center';
     li.textContent = 'No suggestions yet. Add a task to get AI-powered breakdown suggestions!';
     chatAiStepsEl.appendChild(li);
     if (regenerateAiBtn) regenerateAiBtn.classList.add('hidden');
@@ -435,7 +461,7 @@ function renderAISteps(steps) {
 
   steps.forEach((s, idx) => {
     const li = document.createElement('li');
-    li.className = 'bg-accent-500/10 hover:bg-accent-500/20 rounded-xl px-4 py-3 ring-1 ring-accent-500/20 transition';
+    li.className = 'glass-light hover:glass rounded-xl px-4 py-3 transition';
     const title = document.createElement('div');
     title.className = 'text-sm font-medium text-base-900';
     title.textContent = `${idx + 1}. ${s?.title || 'Untitled step'}`;
@@ -460,19 +486,16 @@ async function analyzeTaskWithAI(taskText, todoId, isRegenerate = false) {
     currentAnalyzedTodoId = todoId;
   }
   
-  // Show AI suggestions section
-  if (aiSuggestionsSectionEl) aiSuggestionsSectionEl.classList.remove('hidden');
-  if (chatAiStatusEl) {
-    const statusText = isRegenerate ? 'Generating better version…' : 'Analyzing…';
-    chatAiStatusEl.innerHTML = `<span class="inline-flex items-center gap-2"><svg class="animate-spin h-3 w-3 text-accent-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${statusText}</span>`;
-  }
-  if (chatAiStepsEl) chatAiStepsEl.innerHTML = '';
+  // Set analyzing task ID to show spinner in task item
+  analyzingTodoId = todoId;
+  render(); // Re-render to show spinner
   try {
-    // up to 2 retries on 429 with simple backoff
-    let attempt = 0;
+    // Try streaming first (faster), fallback to regular fetch if needed
+    const useStreaming = true; // Always try streaming for faster responses
     let json = null;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    
+    if (useStreaming) {
+      // Use streaming for faster response
       const res = await fetch(`${API_BASE}/api/ai/analyze-task`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -482,30 +505,111 @@ async function analyzeTaskWithAI(taskText, todoId, isRegenerate = false) {
           context: isRegenerate ? { previousAnalysis: true } : undefined
         })
       });
-      if (res.ok) {
-        json = await res.json();
-        break;
-      }
-      const status = res.status;
-      const data = await res.json().catch(() => ({}));
-      const errorDetails = data?.details || data?.error || `Request failed (${status})`;
       
-      // Don't retry on OpenAI quota errors - retrying won't help
-      if (status === 429 && (errorDetails.includes('quota') || errorDetails.includes('billing'))) {
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const errorDetails = data?.details || data?.error || `Request failed (${res.status})`;
         throw new Error(errorDetails);
       }
       
-      // Only retry on actual rate limit errors (from our server, not OpenAI)
-      if (status === 429 && attempt < 2) {
-        const retryAfter = Number(res.headers.get('retry-after') || 1);
-        if (chatAiStatusEl) {
-          chatAiStatusEl.innerHTML = `<span class="inline-flex items-center gap-2"><svg class="animate-spin h-3 w-3 text-accent-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Rate limited, retrying in ${retryAfter}s…</span>`;
+      // Check if response is streaming (text/event-stream) or regular JSON
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullText = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'chunk') {
+                  fullText += data.content;
+                  // Update status to show progress
+                  if (chatAiStatusEl) {
+                    chatAiStatusEl.textContent = 'Generating suggestions…';
+                  }
+                } else if (data.type === 'complete') {
+                  json = data;
+                  break;
+                } else if (data.type === 'error') {
+                  throw new Error(data.error || 'AI analysis failed');
+                }
+              } catch (e) {
+                // Skip malformed JSON lines
+              }
+            }
+          }
+          
+          if (json) break;
         }
-        await new Promise(r => setTimeout(r, retryAfter * 1000));
-        attempt += 1;
-        continue;
+        
+        if (!json) {
+          // Try to parse accumulated text as JSON
+          try {
+            const match = fullText.match(/\{[\s\S]*\}$/);
+            if (match) {
+              json = { result: JSON.parse(match[0]) };
+            } else {
+              throw new Error('Invalid response from AI');
+            }
+          } catch (e) {
+            throw new Error('Failed to parse AI response');
+          }
+        }
+      } else {
+        // Fallback to regular JSON response
+        json = await res.json();
       }
-      throw new Error(errorDetails);
+    } else {
+      // Non-streaming fallback with retry logic
+      let attempt = 0;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const res = await fetch(`${API_BASE}/api/ai/analyze-task`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            taskText: trimmed,
+            regenerate: isRegenerate,
+            context: isRegenerate ? { previousAnalysis: true } : undefined
+          })
+        });
+        if (res.ok) {
+          json = await res.json();
+          break;
+        }
+        const status = res.status;
+        const data = await res.json().catch(() => ({}));
+        const errorDetails = data?.details || data?.error || `Request failed (${status})`;
+        
+        // Don't retry on OpenAI quota errors - retrying won't help
+        if (status === 429 && (errorDetails.includes('quota') || errorDetails.includes('billing'))) {
+          throw new Error(errorDetails);
+        }
+        
+        // Only retry on actual rate limit errors (from our server, not OpenAI)
+        if (status === 429 && attempt < 2) {
+          const retryAfter = Number(res.headers.get('retry-after') || 1);
+          if (chatAiStatusEl) {
+            chatAiStatusEl.innerHTML = `<span class="inline-flex items-center gap-2"><svg class="animate-spin h-3 w-3 text-accent-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Rate limited, retrying in ${retryAfter}s…</span>`;
+          }
+          await new Promise(r => setTimeout(r, retryAfter * 1000));
+          attempt += 1;
+          continue;
+        }
+        throw new Error(errorDetails);
+      }
     }
     
     // Convert AI suggestions into sub-tasks
@@ -537,21 +641,20 @@ async function analyzeTaskWithAI(taskText, todoId, isRegenerate = false) {
       regenerateAiBtn.classList.remove('hidden');
     }
     
-    if (chatAiStatusEl) {
-      chatAiStatusEl.textContent = isRegenerate ? 'Better version generated' : 'Sub-tasks created';
-      setTimeout(() => { if (chatAiStatusEl) chatAiStatusEl.textContent = ''; }, 1500);
-    }
+    // Clear analyzing state and re-render to hide spinner
+    analyzingTodoId = null;
+    render();
   } catch (err) {
     const msg = String(err?.message || 'AI analysis failed');
     const isQuotaError = msg.includes('quota') || msg.includes('billing') || msg.includes('insufficient_quota');
     
-    if (chatAiStatusEl) {
-      chatAiStatusEl.textContent = isQuotaError ? 'OpenAI quota exceeded' : 'AI unavailable';
-    }
+    // Clear analyzing state and re-render to hide spinner
+    analyzingTodoId = null;
+    render();
     
     if (chatAiStepsEl) {
       const li = document.createElement('li');
-      li.className = 'text-sm text-base-900/90 px-4 py-4 bg-peach-500/20 rounded-xl ring-1 ring-peach-500/30';
+      li.className = 'text-sm text-base-900/90 px-4 py-4 glass-light rounded-xl';
       
       // Show clear error message
       const errorText = document.createElement('div');
@@ -577,6 +680,7 @@ async function analyzeTaskWithAI(taskText, todoId, isRegenerate = false) {
     if (regenerateAiBtn) regenerateAiBtn.classList.add('hidden');
   } finally {
     aiRequestInFlight = false;
+    analyzingTodoId = null; // Ensure spinner is cleared even if something goes wrong
   }
 }
 
@@ -610,11 +714,12 @@ window.addEventListener('todos-updated', async () => {
 // Events
 formEl.addEventListener('submit', async (e) => {
   e.preventDefault();
-  await addTodo(inputEl.value);
+  const taskTitle = inputEl.value.trim();
+  if (!taskTitle) return;
+  
+  await addTodo(taskTitle);
   inputEl.value = '';
   inputEl.focus();
-  // Hide AI suggestions section when starting a new task
-  if (aiSuggestionsSectionEl) aiSuggestionsSectionEl.classList.add('hidden');
 });
 
 clearCompletedEl.addEventListener('click', async () => { await clearCompleted(); });

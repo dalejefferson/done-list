@@ -1,7 +1,7 @@
 # Backend: LocalStorage and AI Task Analyst API
 
 ## Overview
-The Done List app uses **localStorage** (web) and **AsyncStorage** (React Native) as the primary backend for storing todos and subtasks. The backend exposes an async API (Promise-based) that can be easily swapped between implementations. Additionally, notes below document a separate AI Task Analyst API scaffold.
+The Done List app uses **localStorage** (web) and **AsyncStorage** (React Native) as the primary backend for storing todos and subtasks. All storage is **localhost-only** - data persists entirely on the user's local device. The backend exposes an async API (Promise-based) that can be easily swapped between implementations. Additionally, notes below document a separate AI Task Analyst API scaffold that runs on localhost.
 
 ### Current Done List Backend: LocalStorage Service
 Files: 
@@ -63,7 +63,7 @@ Todos are stored as a JSON array in browser storage:
   - `subTasks` (array, optional) - Array of subtask objects
     - Each subtask has: `id`, `title`, `completed`
 
-**Note:** All data is stored locally in the browser/device. No authentication is required, and data is not synced across devices.
+**Note:** All data is stored locally in the browser/device. No authentication is required, and data is not synced across devices. **All API calls default to localhost** - the app is configured to only use localhost for the AI API endpoint, ensuring all storage and processing happens locally.
 
 ## Stack
 - Node.js + Express

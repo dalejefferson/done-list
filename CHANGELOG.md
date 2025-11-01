@@ -2,6 +2,85 @@
 
 ## [Unreleased]
 
+### Changed
+- 💰 **PRICING UPDATE**: Updated monthly billing prices to $5, $10, and $15
+  - Starter plan: Changed from $12/month to $5/month
+  - Business plan: Changed from $48/month to $10/month
+  - Enterprise plan: Changed from $96/month to $15/month
+  - Yearly pricing remains unchanged
+
+### Enhanced
+- ⚡ **SUB-2 SECOND AI RESPONSES**: Aggressively optimized for <2 second response times
+  - Reduced max_tokens from 800 to 400 (50% reduction) for faster completion
+  - Switched to `gpt-3.5-turbo` model (fastest for simple tasks)
+  - Lowered temperature to 0.1 (from 0.3) for ultra-fast deterministic responses
+  - Ultra-minimal prompt: reduced to single line with essential schema only
+  - Simplified user prompt: removed verbose instructions, just "Task: {text}"
+  - Limited steps to maximum 4 (enforced server-side) to reduce output size
+  - Simplified response structure: only `title` and `why` fields (removed `how`, `filesToTouch`, `assumptions`, `risks`, `testPlan`)
+  - Added 2-second timeout with automatic fail-fast if exceeded
+  - Streaming checks timeout during chunk processing
+  - Non-streaming mode also has 2-second timeout protection
+  - AI suggestions now target sub-2 second completion times
+
+### Enhanced
+- ⚡ **FASTER AI RESPONSE TIME**: Optimized AI suggestion generation for quicker responses
+  - Implemented streaming API responses to show results incrementally as they're generated
+  - Switched default model to `gpt-4o-mini` (faster than gpt-3.5-turbo) for better speed
+  - Reduced max_tokens from 1200 to 800 for faster completion
+  - Lowered temperature to 0.3 for more deterministic, faster responses
+  - Shortened system prompt by ~60% to reduce input tokens and processing time
+  - Frontend now handles streaming responses with real-time progress updates
+  - Status updates show "Generating suggestions…" during streaming
+  - All implementations updated (web app, calendar view, React Native app)
+  - Streaming can be disabled via `AI_STREAMING=false` environment variable if needed
+  - AI suggestions now appear noticeably faster with incremental updates
+
+### Enhanced
+- 🔽 **AUTO-COLLAPSE PREVIOUS TASK**: Previous task automatically collapses when a new task is created
+  - When you create a new task, the previously created task automatically collapses its subtasks
+  - Only collapses tasks that haven't been manually expanded by the user
+  - Works for both web app and React Native mobile app
+  - Also works when creating tasks from the calendar view
+  - Keeps the task list clean and focused on the newly created task
+  - Previous task can still be manually expanded again if needed
+
+### Enhanced
+- 🎯 **IN-TASK AI LOADING SPINNER**: Loading spinner now appears inside the task item being created
+  - Spinning icon displays on the right side of the task item while AI is analyzing
+  - No separate AI suggestions window - spinner appears directly in the task row
+  - Provides visual feedback that AI is generating suggestions for that specific task
+  - Spinner automatically disappears when AI analysis completes or fails
+  - Cleaner, more integrated user experience with loading state visible within the task itself
+
+### Enhanced
+- 🎨 **LIQUID GLASS UI**: Transformed entire UI with glassmorphism (liquid glass) effects
+  - Added glassmorphism CSS utilities in `global.css` with backdrop blur and semi-transparent backgrounds
+  - Updated all cards, headers, and UI elements with frosted glass appearance
+  - Web components use backdrop-filter blur effects for true glassmorphism
+  - React Native components use semi-transparent backgrounds and enhanced shadows to simulate glass effect
+  - Cards now have liquid glass appearance with subtle borders and depth
+  - Navigation header uses glass effect with backdrop blur
+  - All feature cards, task items, and modals have consistent glassmorphism styling
+  - Pricing cards and pricing switch updated with glass effects
+  - AI suggestions and todo items use glass styling for modern, elegant appearance
+
+### Changed
+- 🔒 **LOCALHOST-ONLY STORAGE**: All storage and API calls now default to localhost
+  - Updated `src/app.js` to always use `http://localhost:3001` for API calls (removed production URL fallback)
+  - Updated `app/index.js` to always use localhost for API calls (Android emulator uses `10.0.2.2:3001`, iOS uses `localhost:3001`)
+  - All data storage already uses localStorage (web) and AsyncStorage (React Native) - now fully localhost-only
+  - AI API endpoint configured to always use localhost, ensuring all processing happens locally
+  - Updated `backend.md` to document localhost-only storage configuration
+
+### Fixed
+- 🐛 **FIXED**: Pricing cards now display prices correctly
+  - Added error handling and defensive coding to ensure pricing cards render even if buttons aren't found
+  - Fixed initialization order to render cards before setting up button event listeners
+  - Added fallback value for price display to prevent empty pricing
+  - Improved error logging for debugging pricing initialization issues
+  - Cards now render independently of billing toggle button availability
+
 ### Removed
 - 🗑️ **REMOVED**: Completely removed all Supabase-related code and dependencies
   - ✅ Deleted `src/services/backend-supabase.js` (Supabase backend for web)

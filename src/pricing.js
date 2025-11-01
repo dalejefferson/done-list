@@ -8,7 +8,7 @@ const plans = [
     name: "Starter",
     description:
       "Great for small businesses and startups looking to get started with AI",
-    price: 12,
+    price: 5,
     yearlyPrice: 99,
     buttonText: "Get started",
     buttonVariant: "outline",
@@ -30,7 +30,7 @@ const plans = [
     name: "Business",
     description:
       "Best value for growing businesses that need more advanced features",
-    price: 48,
+    price: 10,
     yearlyPrice: 399,
     buttonText: "Get started",
     buttonVariant: "default",
@@ -53,7 +53,7 @@ const plans = [
     name: "Enterprise",
     description:
       "Advanced plan with enhanced security and unlimited access for large teams",
-    price: 96,
+    price: 15,
     yearlyPrice: 899,
     buttonText: "Get started",
     buttonVariant: "outline",
@@ -157,59 +157,68 @@ function updatePricingSwitch() {
 
 function renderPricingCards() {
   const container = document.getElementById('pricing-cards');
-  if (!container) return;
+  if (!container) {
+    console.error('Pricing cards container not found');
+    return;
+  }
 
   container.innerHTML = '';
 
   plans.forEach((plan) => {
     const card = document.createElement('div');
-    card.className = `pricing-card relative border border-accent-500/20 rounded-xl bg-cream-50 p-6 ${
-      plan.popular ? 'ring-2 ring-accent-500 bg-accent-500/10' : ''
-    }`;
+    if (plan.popular) {
+      card.className = 'pricing-card relative rounded-xl bg-white p-6 border-2 border-accent-500';
+      card.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+    } else {
+      card.className = 'pricing-card relative rounded-xl bg-white p-6 border border-gray-200';
+      card.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+    }
     card.style.opacity = '0';
     card.style.transform = 'translateY(20px)';
     card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
 
     const price = isYearly ? plan.yearlyPrice : plan.price;
     const period = isYearly ? 'year' : 'month';
+    
+    // Ensure price is a valid number
+    const displayPrice = price || 0;
 
     card.innerHTML = `
       <div class="text-left">
-        <div class="flex justify-between mb-2">
-          <h3 class="xl:text-3xl md:text-2xl text-3xl font-semibold text-base-900">
+        <div class="relative mb-2">
+          <h3 class="text-3xl font-bold text-base-900 mb-2 pr-20">
             ${plan.name} Plan
           </h3>
-          ${plan.popular ? '<span class="flex items-center justify-center w-20 h-20 rounded-full bg-accent-500/20 border border-accent-500/40 text-accent-600 text-sm font-medium">Popular</span>' : ''}
+          ${plan.popular ? '<span class="absolute top-0 right-0 bg-accent-500 text-white text-xs font-medium px-2.5 py-1 rounded-full">Popular</span>' : ''}
         </div>
-        <p class="xl:text-sm md:text-xs text-sm text-base-900/70 mb-4">
+        <p class="text-sm text-base-900/70 mb-4">
           ${plan.description}
         </p>
         <div class="flex items-baseline mb-6">
-          <span class="text-4xl font-semibold text-base-900">$</span>
-          <span class="text-4xl font-semibold text-base-900 pricing-price" data-monthly="${plan.price}" data-yearly="${plan.yearlyPrice}">${price}</span>
-          <span class="text-base-900/70 ml-1">/${period}</span>
+          <span class="text-5xl font-bold text-base-900 pricing-price" data-monthly="${plan.price}" data-yearly="${plan.yearlyPrice}">${displayPrice}</span>
+          <span class="text-base-900/70 ml-2 text-lg">/${period}</span>
         </div>
       </div>
 
       <div class="pt-0">
-        <button class="w-full mb-6 p-4 text-xl rounded-xl transition ${
+        <button class="w-full mb-6 py-3 rounded-xl transition font-medium ${
           plan.popular
-            ? 'bg-gradient-to-t from-accent-500 to-accent-600 shadow-glow border border-accent-500 text-cream-50 hover:from-accent-600 hover:to-accent-700'
-            : plan.buttonVariant === 'outline'
-              ? 'bg-gradient-to-t from-base-900 to-base-800 shadow-lg shadow-base-900/30 border border-base-700 text-cream-50 hover:from-base-800 hover:to-base-900'
-              : 'bg-accent-500 hover:bg-accent-600 text-cream-50 shadow-glow'
+            ? 'bg-accent-500/90 hover:bg-accent-500 text-white'
+            : 'bg-accent-500 hover:bg-accent-600 text-white'
         }">
           ${plan.buttonText}
         </button>
 
-        <div class="space-y-3 pt-4 border-t border-accent-500/20">
-          <h2 class="text-xl font-semibold uppercase text-base-900 mb-3">Features</h2>
-          <h4 class="font-medium text-base text-base-900 mb-3">${plan.includes[0]}</h4>
-          <ul class="space-y-2 font-semibold">
+        <div class="space-y-3 pt-4 border-t border-gray-200">
+          <h2 class="text-sm font-bold uppercase text-base-900 mb-3">FEATURES</h2>
+          <p class="text-sm text-base-900/70 mb-3">${plan.includes[0]}</p>
+          <ul class="space-y-2">
             ${plan.includes.slice(1).map((feature) => `
-              <li class="flex items-center">
-                <span class="h-6 w-6 bg-cream-50 border border-accent-500 rounded-full grid place-content-center mt-0.5 mr-3 text-accent-500">
-                  ${icons.check}
+              <li class="flex items-start">
+                <span class="h-5 w-5 rounded-full bg-accent-500/20 flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3 w-3 text-accent-500">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
                 </span>
                 <span class="text-sm text-base-900/70">${feature}</span>
               </li>
@@ -251,8 +260,21 @@ function updatePrices() {
 function initPricing() {
   const monthlyBtn = document.getElementById('monthly-btn');
   const yearlyBtn = document.getElementById('yearly-btn');
+  const container = document.getElementById('pricing-cards');
 
-  if (!monthlyBtn || !yearlyBtn) return;
+  // Always render cards even if buttons don't exist yet
+  if (!container) {
+    console.error('Pricing cards container not found');
+    return;
+  }
+
+  // Render cards first
+  renderPricingCards();
+
+  if (!monthlyBtn || !yearlyBtn) {
+    console.warn('Pricing buttons not found, but cards should still render');
+    return;
+  }
 
   monthlyBtn.addEventListener('click', () => {
     if (!isYearly) return;
@@ -268,9 +290,8 @@ function initPricing() {
     updatePrices();
   });
 
-  // Initial render
+  // Initial switch setup
   updatePricingSwitch();
-  renderPricingCards();
 
   // Update indicator position on window resize
   let resizeTimeout;
@@ -323,9 +344,26 @@ function initPricing() {
 }
 
 // Initialize when DOM is ready
+function ensureInit() {
+  // Try to initialize
+  try {
+    initPricing();
+  } catch (error) {
+    console.error('Error initializing pricing:', error);
+    // Retry after a short delay
+    setTimeout(() => {
+      try {
+        initPricing();
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+      }
+    }, 100);
+  }
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initPricing);
+  document.addEventListener('DOMContentLoaded', ensureInit);
 } else {
-  initPricing();
+  ensureInit();
 }
 

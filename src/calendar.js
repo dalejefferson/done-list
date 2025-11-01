@@ -175,8 +175,22 @@ if (taskModalFormEl) {
     const taskTitle = taskModalInputEl.value.trim();
     
     if (taskTitle && pendingDateStr) {
+      // Collapse the previous task if it exists
+      if (window.previousTodoId) {
+        const previousTodo = todos.find(t => t.id === window.previousTodoId);
+        if (previousTodo && !window.manuallyExpandedTodos.has(window.previousTodoId)) {
+          window.collapsedTodos.add(window.previousTodoId);
+        }
+      }
+      
       const newTodo = await backend.createTodo(taskTitle, pendingDateStr);
       await loadTodos();
+      
+      // Track this as the previous task for next time
+      if (newTodo) {
+        window.previousTodoId = newTodo.id;
+      }
+      
       // Dispatch custom event to notify main app to refresh
       window.dispatchEvent(new CustomEvent('todos-updated'));
       
@@ -275,42 +289,82 @@ async function analyzeTaskWithAI(taskText, todoId, isRegenerate = false) {
   if (aiSuggestionsActionsEl) aiSuggestionsActionsEl.classList.add('hidden');
   
   try {
-    // up to 2 retries on 429 with simple backoff
-    let attempt = 0;
-    let json = null;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const res = await fetch(`${API_BASE}/api/ai/analyze-task`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          taskText: trimmed,
-          regenerate: isRegenerate,
-          context: isRegenerate ? { previousAnalysis: true } : undefined
-        })
-      });
-      if (res.ok) {
-        json = await res.json();
-        break;
-      }
-      const status = res.status;
+    // Use streaming for faster response
+    const res = await fetch(`${API_BASE}/api/ai/analyze-task`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        taskText: trimmed,
+        regenerate: isRegenerate,
+        context: isRegenerate ? { previousAnalysis: true } : undefined
+      })
+    });
+    
+    if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      const errorDetails = data?.details || data?.error || `Request failed (${status})`;
-      
-      // Don't retry on OpenAI quota errors - retrying won't help
-      if (status === 429 && (errorDetails.includes('quota') || errorDetails.includes('billing'))) {
-        throw new Error(errorDetails);
-      }
-      
-      // Only retry on actual rate limit errors (from our server, not OpenAI)
-      if (status === 429 && attempt < 2) {
-        const retryAfter = Number(res.headers.get('retry-after') || 1);
-        if (aiSuggestionsStatusEl) aiSuggestionsStatusEl.textContent = `Rate limited, retrying in ${retryAfter}s…`;
-        await new Promise(r => setTimeout(r, retryAfter * 1000));
-        attempt += 1;
-        continue;
-      }
+      const errorDetails = data?.details || data?.error || `Request failed (${res.status})`;
       throw new Error(errorDetails);
+    }
+    
+    // Check if response is streaming (text/event-stream) or regular JSON
+    const contentType = res.headers.get('content-type') || '';
+    let json = null;
+    
+    if (contentType.includes('text/event-stream')) {
+      // Handle streaming response
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullText = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.type === 'chunk') {
+                fullText += data.content;
+                if (aiSuggestionsStatusEl) {
+                  aiSuggestionsStatusEl.textContent = 'Generating suggestions…';
+                }
+              } else if (data.type === 'complete') {
+                json = data;
+                break;
+              } else if (data.type === 'error') {
+                throw new Error(data.error || 'AI analysis failed');
+              }
+            } catch (e) {
+              // Skip malformed JSON lines
+            }
+          }
+        }
+        
+        if (json) break;
+      }
+      
+      if (!json) {
+        // Try to parse accumulated text as JSON
+        try {
+          const match = fullText.match(/\{[\s\S]*\}$/);
+          if (match) {
+            json = { result: JSON.parse(match[0]) };
+          } else {
+            throw new Error('Invalid response from AI');
+          }
+        } catch (e) {
+          throw new Error('Failed to parse AI response');
+        }
+      }
+    } else {
+      // Fallback to regular JSON response
+      json = await res.json();
     }
     
     const steps = json?.result?.steps || [];
